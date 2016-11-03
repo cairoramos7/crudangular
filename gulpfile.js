@@ -62,6 +62,11 @@ gulp.task('materialJs', function(){
         .pipe(gulp.dest(jsDest));
 });
 
+gulp.task('fonts', function(){
+    return gulp.src('./node_modules/materialize-css/fonts/roboto/*.*')
+        .pipe(gulp.dest('./public_html/libs/fonts/roboto/'));
+});
+
 gulp.task('copyScript', function(){
     return gulp.src(jqueryPath)
         .pipe(gulp.dest(jsDest));
@@ -71,6 +76,7 @@ gulp.task('default', function(){
     gulp.run([
         'angularJs',
         'materialSass',
+        'fonts',
         'copyScript',
         'materialJs'
     ]);
