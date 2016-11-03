@@ -6,7 +6,7 @@ class Database {
      * */
 
     private $host = 'localhost';
-    private $db_name = '5phpangularcrudlevel1';
+    private $db_name = 'crudangular';
     private $username = 'cairo.ramos';
     private $password = '1';
     public $conn;

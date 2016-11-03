@@ -1,6 +1,6 @@
-create database phpajaxcrudlevel1 collate utf8_general_ci;
+create database crudangular collate utf8_general_ci;
 
-use phpajaxcrudlevel1;
+use crudangular;
 
 CREATE TABLE IF NOT EXISTS `products` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

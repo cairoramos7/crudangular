@@ -10,11 +10,161 @@
     <link rel="stylesheet" href="libs/css/materialize.css">
 
     <!-- Material Design Icons -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <style type="text/css">
+        .width-30-pct{
+            width: 30%;
+        }
+
+        .margin-bottom-1em{
+            margin-bottom: 1em;
+        }
+    </style>
 </head>
 <body>
+    <div class="container" ng-app="myApp" ng-controller="productsCtrl">
+        <div class="row">
+            <div class="col s12">
+                <div id="modal-product-form" class="modal">
+                    <div class="modal-content">
+                        <h4 id="modal-product-title">Create New Product</h4>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input type="text" ng-model="name" class="validate" id="form-name" placeholder="Type name here...">
+                                <label for="name">Name</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <textarea class="validate materialize-textarea" id="" cols="30" rows="10" ng-model="description" placeholder="Type description here..."></textarea>
+                                <label for="description">Description</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <input type="text" ng-model="price" class="validate" id="form-price" placeholder="Type price here...">
+                                <label for="price">Price</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <a id="btn-create-product" class="waves-effect waves-light btn margin-bottom-1em" ng-click="createProduct()">
+                                    <i class="material-icons left">add</i> Add
+                                </a>
+                                <a id="btn-update-product" class="waves-effect waves-light btn margin-bottom-1em" ng-click="updateProduct()">
+                                    <i class="material-icons left">edit</i> Edit
+                                </a>
+                                <a class="modal-action modal-close waves-effect waves-light btn margin-bottom-1em">
+                                    <i class="material-icons left">close</i> Close
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h4>Products</h4>
+                <!-- used for searching the current list -->
+                <input type="text" ng-model="search" class="form-control" placeholder="Search product..." />
+
+                <!-- table that shows product record list -->
+                <table class="hoverable bordered">
+
+                    <thead>
+                    <tr>
+                        <th class="text-align-center">ID</th>
+                        <th class="width-30-pct">Name</th>
+                        <th class="width-30-pct">Description</th>
+                        <th class="text-align-center">Price</th>
+                        <th class="text-align-center">Action</th>
+                    </tr>
+                    </thead>
+
+                    <tbody ng-init="getAll()">
+                    <tr ng-repeat="d in names | filter:search">
+                        <td class="text-align-center">{{ d.id }}</td>
+                        <td>{{ d.name }}</td>
+                        <td>{{ d.description }}</td>
+                        <td class="text-align-center">{{ d.price }}</td>
+                        <td>
+                            <a ng-click="readOne(d.id)" class="waves-effect waves-light btn margin-bottom-1em"><i class="material-icons left">edit</i>Edit</a>
+                            <a ng-click="deleteProduct(d.id)" class="waves-effect waves-light btn margin-bottom-1em"><i class="material-icons left">delete</i>Delete</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="fixed-action-btn" style="bottom:45px; right:24px;">
+            <a class="waves-effect waves-light btn modal-trigger btn-floating btn-large red" href="#modal-product-form" ng-click="showCreateForm()"><i class="large material-icons">add</i></a
+        </div>
+
+    </div>
 
 <!-- Jquery -->
-<script src=""></script>
+<script type="text/javascript" src="libs/js/jquery.min.js"></script>
+
+<!-- Materiallize -->
+<script type="text/javascript" src="libs/js/materiallize.js"></script>
+
+<!-- AngularJs -->
+<script type="text/javascript" src="libs/js/angular.min.js"></script>
+
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('productsCtrl', function($scope, $http)
+    {
+        /* AngularJs codes will be here */
+        $scope.showCreateForm = function(){
+            // clear form
+            $scope.clearForm();
+
+            // change modal title
+            $('#modal-product-title').text("Create New Product");
+
+            // hide update product button
+            $('#btn-update-product').hide();
+
+            // show create product button
+            $('#btn-create-product').show();
+        }
+
+        /* Clear variable / form values */
+        $scope.clearForm = function(){
+            $scope.id = "";
+            $scope.name = "";
+            $scope.description = "";
+            $scope.price = "";
+        }
+
+        $scope.createProduct = function(){
+            // Fiels in key-value pairs
+            $http.post('create_product.php',{
+                'name' : $scope.name,
+                'description' : $scope.description,
+                'price' : $scope.price
+            })
+                .success(function(data, status, headers, config){
+                    console.log(data);
+
+                    // Tell the user new product was created
+                    Materialize.toast(data, 4000);
+
+                    // Close Modal
+                    $('#modal-product-form').closeModal();
+
+                    // Clear modal content
+                    $scope.clearForm();
+
+                    // Refresh the list
+                    $scope.getAll();
+                });
+        }
+        // Read products
+        $scope.getAll = function(){
+            $http.get("read_products.php").success(function(response){
+                $scope.names = response.records;
+            });
+        }
+    });
+    $(document).ready(function(){
+        // Initialize Modal
+        $('.modal-trigger').modal();
+    });
+</script>
 </body>
 </html>
